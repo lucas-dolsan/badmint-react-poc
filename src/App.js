@@ -1,16 +1,17 @@
 import * as React from "react";
 import { Routes, Route, Outlet, Link } from "react-router-dom";
+import BadmintonComponent from "./BadmintonComponent";
 
 export default function App() {
   return (
     <div>
       <h1>Exemplo de rotas</h1>
-
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
           <Route path="about" element={<About />} />
           <Route path="dashboard" element={<Dashboard />} />
+          <Route path="example-1" element={<BadmintonComponent titulo={''}><NotFound /></BadmintonComponent>} />
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>
@@ -31,6 +32,9 @@ function Layout() {
           </li>
           <li>
             <Link to="/dashboard">Dashboard</Link>
+          </li>
+          <li>
+            <Link to="/example-1">Exemplo 1</Link>
           </li>
           <li>
             <Link to="/not-found">Not found</Link>
@@ -61,6 +65,12 @@ function About() {
 
 function Dashboard() {
   const [count, setCount] = React.useState(0);
+
+  function quandoMudarOCount() {
+    alert('mudou')
+  }
+
+  React.useEffect(quandoMudarOCount, []);
 
   function cliquei() {
     setCount(count + 1);
