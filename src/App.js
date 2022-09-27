@@ -1,3 +1,4 @@
+import axios from "axios";
 import * as React from "react";
 import { Routes, Route, Outlet, Link } from "react-router-dom";
 import BadmintonComponent from "./BadmintonComponent";
@@ -10,8 +11,12 @@ export default function App() {
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
           <Route path="about" element={<About />} />
-          <Route path="dashboard" element={<Dashboard />} />
-          <Route path="example-1" element={<BadmintonComponent titulo={''}><NotFound /></BadmintonComponent>} />
+          <Route path="dashboard" element={<NotFound />} />
+          <Route path="example-1" element={(
+            <BadmintonComponent titulo={''}>
+              <Dashboard />
+            </BadmintonComponent>
+          )} />
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>
@@ -65,12 +70,24 @@ function About() {
 
 function Dashboard() {
   const [count, setCount] = React.useState(0);
+  const [isTituloLoading, setIsTituloLoading] = React.useState(true);
+  const [titulo, setTitulo] = React.useState('');
 
-  function quandoMudarOCount() {
-    alert('mudou')
+  function onMount() {
+    async function fetchData() {
+      try {
+        const response = await axios.get('https://viacep.com.br/ws/01001000/json/')
+        setTitulo(response.data.logradouro)
+      } catch (error) {
+        alert(error) 
+      } finally {
+        setIsTituloLoading(false);
+      }
+    }
+    fetchData()
   }
 
-  React.useEffect(quandoMudarOCount, []);
+  React.useEffect(onMount, []);
 
   function cliquei() {
     setCount(count + 1);
@@ -90,6 +107,7 @@ function Dashboard() {
         teste
       </button>
       <h3>{count}</h3>
+      <h3>{!isTituloLoading ? titulo : 'Carregando'}</h3>
     </div>
   );
 }
