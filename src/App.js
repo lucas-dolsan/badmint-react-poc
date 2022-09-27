@@ -12,11 +12,14 @@ export default function App() {
           <Route index element={<Home />} />
           <Route path="about" element={<About />} />
           <Route path="dashboard" element={<NotFound />} />
-          <Route path="example-1" element={(
-            <BadmintonComponent titulo={''}>
-              <Dashboard />
-            </BadmintonComponent>
-          )} />
+          <Route
+            path="example-1"
+            element={
+              <BadmintonComponent titulo={""}>
+                <Dashboard />
+              </BadmintonComponent>
+            }
+          />
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>
@@ -69,28 +72,16 @@ function About() {
 }
 
 function Dashboard() {
-  const [count, setCount] = React.useState(0);
-  const [isTituloLoading, setIsTituloLoading] = React.useState(true);
-  const [titulo, setTitulo] = React.useState('');
+  const [cep, setCep] = React.useState("");
+  const [localidade, setLocalidade] = React.useState("");
 
-  function onMount() {
-    async function fetchData() {
-      try {
-        const response = await axios.get('https://viacep.com.br/ws/01001000/json/')
-        setTitulo(response.data.logradouro)
-      } catch (error) {
-        alert(error) 
-      } finally {
-        setIsTituloLoading(false);
-      }
+  async function onBuscar() {
+    try {
+      const response = await axios.get(`https://viacep.com.br/ws/${cep}/json/`);
+      setLocalidade(response.data.localidade);
+    } catch (error) {
+      console.error(error);
     }
-    fetchData()
-  }
-
-  React.useEffect(onMount, []);
-
-  function cliquei() {
-    setCount(count + 1);
   }
 
   return (
@@ -102,12 +93,16 @@ function Dashboard() {
         justifyContent: "space-evenly",
       }}
     >
-      <h2>Dashboard</h2>
-      <button style={{ width: "5rem" }} onClick={cliquei}>
-        teste
+      <h2>Buscar por cep</h2>
+      <input
+        type="text"
+        value={cep}
+        onChange={(event) => setCep(event.target.value)}
+      />
+      <button style={{ width: "5rem" }} onClick={onBuscar}>
+        Buscar
       </button>
-      <h3>{count}</h3>
-      <h3>{!isTituloLoading ? titulo : 'Carregando'}</h3>
+      <h3>Localidade: {!localidade ? "..." : localidade}</h3>
     </div>
   );
 }
